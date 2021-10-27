@@ -52,9 +52,12 @@ public class lec1 {
 
         boolean[] vis = new boolean[N];
         //System.out.println(dfs_findPath(graph, 0, 6, vis));
-        System.out.println(printAllPath(graph, 0, 6, 0 + "", 0, vis));
+        //System.out.println(printAllPath(graph, 0, 6, 0 + "", 0, vis));
+        gcc(graph);
     }
 
+
+    //O(E)
     public static int findEdge(ArrayList<Edge>[] graph, int u, int v) {
         ArrayList<Edge> list = graph[u];
 
@@ -68,6 +71,7 @@ public class lec1 {
         return -1;
     }
 
+    //O(E)
     public static void removeEdge(ArrayList<Edge>[] graph, int u, int v) {
         int idx = findEdge(graph, u, v);
         graph[u].remove(idx);
@@ -76,6 +80,7 @@ public class lec1 {
         graph[v].remove(idx1);
     }
 
+    //O(E), where E is the total number of edges in that component
     public static boolean dfs_findPath(ArrayList<Edge>[] graph, int src, int dest, boolean[] visited) {
         if(src == dest) {
             return true;
@@ -109,6 +114,30 @@ public class lec1 {
 
         visited[src] = false;
         return count;
+    }
+
+    //get connected components O(E + V) // 25 calls
+    public static void gcc(ArrayList<Edge>[] graph) {
+        //ArrayList<Integer> comps = new ArrayList<>();
+        int comps = 0;
+        boolean[] vis = new boolean[graph.length];
+        for(int i = 0; i < graph.length; i++) {
+            if(!vis[i]) {
+                comps++;
+                gcc_dfs(graph, i, vis);
+            }
+        }
+
+        System.out.println(comps);
+    }
+
+    public static void gcc_dfs(ArrayList<Edge>[] graph, int src, boolean[] vis) {
+        vis[src] = true;
+        for(Edge e : graph[src]) {
+            if(!vis[e.v]) {
+                gcc_dfs(graph, e.v, vis);
+            }
+        }
     }
 
     public static void main(String[] args) {
