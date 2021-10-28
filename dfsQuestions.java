@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class dfsQuestions {
     //lc 200, 695, 463, 130
 
@@ -90,5 +92,74 @@ public class dfsQuestions {
             }
         }
         return 4 * oneCount - 2 * nbrCount;
+    }
+
+    //lc 130
+    public void solve(char[][] grid) {
+        int n = grid.length, m = grid[0].length;
+        boolean[][] vis = new boolean[n][m];
+        int[][] dir = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if((i == 0 || j == 0 || i == n - 1 || j == m - 1) && grid[i][j] == 'O') {
+                    surrounded_DFS(grid, i, j, dir);
+                }
+            }
+        }
+        
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if(grid[i][j] == '$') grid[i][j] = 'O';
+                else if(grid[i][j] == 'O') grid[i][j] = 'X';
+            }
+        }
+        
+    }
+    
+    public void surrounded_DFS(char[][] grid, int sr, int sc, int[][] dir) {
+        grid[sr][sc] = '$';
+        
+        for(int d = 0; d < dir.length; d++) {
+            int r = sr + dir[d][0], c = sc + dir[d][1];
+            if(r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c] == 'O') {
+                surrounded_DFS(grid, r, c, dir);
+            }
+        }
+    }
+
+    //lc 694
+    public void noOfDistinctIslands(int[][] grid, int sr, int sc, int[][] dir, String[] dirS) {
+        grid[sr][sc] = 0;
+        for(int d = 0; d < dir.length; d++) {
+            int r = sr + dir[d][0], c = sc + dir[d][1];
+            if(r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c] == 1) {
+                sb.append(dirS[d]);
+                noOfDistinctIslands(grid, r, c, dir, dirS);
+            }
+        }
+        //grid[sr][sc] = 1;
+        sb.append('b');
+    } 
+
+    StringBuilder sb;
+    public int numberofDistinctIslands(int[][] grid) {
+        int[][] dir = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        String[] dirS = {"R", "D", "U", "L"};
+        HashSet<String> hs = new HashSet<>();
+        int n = grid.length, m = grid[0].length;
+
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if(grid[i][j] == 1) {
+                    sb = new StringBuilder();
+                    noOfDistinctIslands(grid, i, j, dir, dirS);
+                    if(!hs.contains(sb.toString())) {
+                        hs.add(sb.toString());
+                    }
+                }
+            }
+        }
+        return hs.size();
     }
 }
