@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class dfsQuestions {
-    //lc 200, 695, 463, 130
+    //lc 200, 695, 463, 130, 694, 1905
 
     //lc 200
     //O(E + V) = N X M
@@ -162,4 +162,33 @@ public class dfsQuestions {
         }
         return hs.size();
     }
+
+    //1905
+    public int countSubIslands(int[][] grid1, int[][] grid2) {
+        int n = grid1.length, m = grid1[0].length;
+        int[][] dir = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        int count = 0;
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if(grid2[i][j] == 1) {
+                    count += (countIslands(grid1, grid2, i, j, dir)) ? 1 : 0;
+                }
+            }
+        }
+        return count;
+    }
+    
+    public boolean countIslands(int[][] grid1, int[][] grid2, int sr, int sc, int[][] dir) {
+        grid2[sr][sc] = 0;
+        boolean res = true;
+        for(int d = 0; d < 4; d++) {
+            int r = sr + dir[d][0], c = sc + dir[d][1];
+            if(r >= 0 && c >= 0 && r < grid2.length && c < grid2[0].length && grid2[r][c] == 1) {
+                res = countIslands(grid1, grid2, r, c, dir) && res;
+            }
+        }
+        
+        return res && grid1[sr][sc] == 1;
+    }
+    
 }

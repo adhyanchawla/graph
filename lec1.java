@@ -53,7 +53,9 @@ public class lec1 {
         boolean[] vis = new boolean[N];
         //System.out.println(dfs_findPath(graph, 0, 6, vis));
         //System.out.println(printAllPath(graph, 0, 6, 0 + "", 0, vis));
-        gcc(graph);
+        //gcc(graph);
+        //BFS_forCycle(graph, 0, vis);
+        BFS_withoutCycle(graph, 0, vis);
     }
 
 
@@ -137,6 +139,66 @@ public class lec1 {
             if(!vis[e.v]) {
                 gcc_dfs(graph, e.v, vis);
             }
+        }
+    }
+
+
+    //O(E)
+    //cycle detection, shortest path
+    public static void BFS_forCycle(ArrayList<Edge>[] graph, int src, boolean[] vis) {
+        LinkedList<Integer> que = new LinkedList<>();
+        int level = 0;
+        que.addLast(src);
+        boolean cycle = false;
+
+        while(que.size() != 0) {
+            int size = que.size();
+            System.out.print("Min Edges : " + level + " -> ");
+            while(size --> 0) {
+                int rvtx = que.removeFirst();
+
+                if(vis[rvtx]) {
+                    cycle = true;
+                    continue;
+                }
+
+                System.out.print(rvtx + ", ");
+                vis[rvtx] = true;
+
+                for(Edge e : graph[rvtx]) {
+                    if(!vis[e.v]) {
+                        que.addLast(e.v);
+                    }
+                }
+            }
+            System.out.println();
+            level++;
+        }
+    }
+
+    //O(V) --> V < E
+    public static void BFS_withoutCycle(ArrayList<Edge>[] graph, int src, boolean[] vis) {
+        LinkedList<Integer> que = new LinkedList<>();
+        que.add(src);
+        vis[src] = true;
+        int level = 0;
+
+        while(que.size() != 0) {
+            int size = que.size();
+            System.out.print("Min Edges : " + level + " -> ");
+            while(size-- > 0) {
+                int rvtx = que.removeFirst();
+
+                System.out.print(rvtx + ", ");
+                for(Edge e : graph[rvtx]) {
+                    if(!vis[e.v]) {
+                        que.addLast(e.v);
+                        vis[e.v] = true;
+                    }
+                }
+            }
+            level++;
+            System.out.println();
         }
     }
 
