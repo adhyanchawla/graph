@@ -197,4 +197,105 @@ public class bfsQuestions {
         
     }
 
+    //lc 886 : possible bipartite
+
+    public boolean possibleBipartition(int n, int[][] dislikes) {
+
+        //graph needs to be created in a different way in this ques
+        List<List<Integer>> graph = new ArrayList<>(n + 1);
+        //adj list initialised with arraylist at each index
+        for(int i = 0; i <= n; i++) {
+            graph.add(new ArrayList<>());
+        }
+        
+        //addEdge 
+        for(int[] d : dislikes) {
+            graph.get(d[0]).add(d[1]);
+            graph.get(d[1]).add(d[0]);
+        }
+        
+        int[] visited = new int[n + 1];
+        Arrays.fill(visited, -1);
+        
+    
+        for(int i = 1; i <= n; i++) {
+            if(visited[i] == -1) {
+                if(!isBipartite(graph, i, n, visited)) {
+                    return false;
+                }
+            }            
+        }
+        return true;
+    }
+    
+    public boolean isBipartite(List<List<Integer>> graph, int src, int n, int[] visited) {
+        Queue<Integer> q = new ArrayDeque<>();
+        q.add(src);
+        int color = 0;
+        while(q.size() != 0) {
+            int sz = q.size();
+            while(sz-->0) {
+                int rm = q.remove();
+                
+                if(visited[rm] != -1) {
+                    if(visited[rm] != color) {
+                        return false;
+                    } else continue;
+                }
+                
+                visited[rm] = color;
+                
+                for(int v : graph.get(rm)) {
+                    if(visited[v] == -1) {
+                            q.add(v);
+                        }    
+                }
+            }
+            color = (color + 1) % 2;
+        }
+        return true;
+    }
+
+    // lc walls and gates
+    // same as lc 01 matrix
+    public void wallsAndGates(int[][] rooms) {
+        // write your code here
+        int n = rooms.length;
+        int m = rooms[0].length;
+
+        Queue<Integer> q = new ArrayDeque<>();
+
+        int[][] dir = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        boolean[][] visited = new boolean[n][m];
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if(rooms[i][j] == 0) {
+                    q.add(i * m + j);
+                    visited[i][j] = true;
+                }            
+            }
+        }
+
+        while(q.size() != 0) {
+            int sz = q.size();
+            while(sz-->0) {
+                int idx = q.remove();
+                int sr = idx / m;
+                int sc = idx % m;
+
+                for(int d = 0; d < dir.length; d++) {
+                    int r = sr + dir[d][0];
+                    int c = sc + dir[d][1];
+
+                    if(r >= 0 && c >= 0 && r < n && c < m && rooms[r][c] == 2147483647 && !visited[r][c]) {
+                        visited[r][c] = true;
+                        rooms[r][c] = rooms[sr][sc] + 1;
+                        q.add(r * m + c);
+                    }
+                }
+            }
+        }
+
+    }
+
 }
