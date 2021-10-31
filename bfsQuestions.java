@@ -151,7 +151,50 @@ public class bfsQuestions {
         return mat;
     }
 
+
+    // 785
+    public boolean isBipartite(int[][] graph) {
+        int n = graph.length;
+        for(int i = 0; i < n; i++) {
+            if(!isBipartite(graph, i)) {
+                return false;
+            }
+        }
+        return true;
+    }
     
-    //
+    public boolean isBipartite(int[][] graph, int sr) {
+        int n = graph.length;
+        int[] visited = new int[n];
+        Arrays.fill(visited, -1);
+        Queue<Integer> q = new ArrayDeque<>();
+        q.add(sr);
+        
+        int lvl = 0;
+        while(q.size() != 0) {
+            int sz = q.size();
+            while(sz-->0) {
+                int rm = q.remove();
+                
+                if(visited[rm] != -1) {
+                    if(visited[rm] != lvl) {
+                        return false;
+                    } else continue;
+                }
+                
+                visited[rm] = lvl;
+                
+                for(int v : graph[rm]) {
+                    if(visited[v] == -1) {
+                        q.add(v);
+                    }
+                }
+            }
+            lvl = (lvl + 1) % 2;
+        }
+        
+        return true;
+        
+    }
 
 }
