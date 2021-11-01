@@ -191,4 +191,100 @@ public class dfsQuestions {
         return res && grid1[sr][sc] == 1;
     }
 
+    //lc 207 : course schedule
+
+    public boolean canFinish(int N, int[][] prerequisites) {
+        ArrayList<Integer>[] graph = new ArrayList[N];
+        
+        for(int i = 0; i < N; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        
+        for(int [] a : prerequisites) {
+            graph[a[0]].add(a[1]);
+        }
+        
+        int[] visited = new int[N];
+        
+        for(int i = 0; i < N; i++) {
+            if(visited[i] == 0) {
+                if(isCyclic(graph, visited, i)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    public boolean isCyclic(ArrayList<Integer>[] graph, int [] visited, int src) {
+        if(visited[src] == 2) {
+            return true;
+        }
+        
+        visited[src] = 2;
+        
+        boolean ans = false;
+        for(Integer v : graph[src]) {
+            if(visited[v] != 1) {
+                if(isCyclic(graph, visited, v)) {
+                    return true;
+                }
+            }
+        }
+        
+        visited[src] = 1;
+        return false;
+    } 
+
+
+    // lc 210
+
+    public int[] findOrder(int N, int[][] arr) {
+        ArrayList<Integer>[] graph = new ArrayList[N];
+        
+        for(int i = 0; i < N; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        
+        for(int [] a : arr) {
+            graph[a[0]].add(a[1]);
+        }
+        
+        int[] visited = new int[N];
+        
+        idx = 0;
+        int[] ans = new int[N];
+        for(int i = 0; i < N; i++) {
+            if(visited[i] == 0) {
+                if(isCyclic(graph, visited, i, ans)) {
+                    int[] a = new int[0];
+                    return a;
+                }
+            }
+        }
+        return ans;
+    }
+    
+    public static int idx = 0;
+    
+    public boolean isCyclic(ArrayList<Integer>[] graph, int [] visited, int src, int[] ans) {
+        if(visited[src] == 2) {
+            return true;
+        }
+        
+        visited[src] = 2;
+        
+        for(Integer v : graph[src]) {
+            if(visited[v] != 1) {
+                if(isCyclic(graph, visited, v, ans)) {
+                    return true;
+                }
+            }
+        }
+        
+        ans[idx++] = src;
+        visited[src] = 1;
+        return false;
+    }
+
 }

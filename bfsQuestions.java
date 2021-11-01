@@ -298,4 +298,107 @@ public class bfsQuestions {
 
     }
 
+    //lc 207 : course schedule using BFS
+    public static boolean canFinish(int numCourses, int[][] prerequisites) {
+        List<List<Integer>> adj = new ArrayList<>(numCourses);
+        for(int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList<>());
+        }
+        
+        for(int[] d : prerequisites) {
+            adj.get(d[0]).add(d[1]);
+        }
+        
+        int[] indegree = new int[numCourses];
+        
+        for(int i = 0; i < numCourses; i++) {
+            for(int j = 0; j < adj.get(i).size(); j++) {
+                indegree[adj.get(i).get(j)]++;
+            }
+        }
+        
+        Queue<Integer> q = new ArrayDeque<>();
+        
+        for(int i = 0; i < numCourses; i++) {
+            if(indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+        
+        ArrayList<Integer> ans = new ArrayList<>();
+        while(q.size() != 0) {
+            int rm = q.remove();
+            ans.add(rm);
+            
+            for(int ele : adj.get(rm)) {
+                if(--indegree[ele] == 0) {
+                    q.add(ele);
+                }
+            }
+        }
+        
+        if(ans.size() == numCourses) return true;
+        else return false;
+    }
+
+    //lc : 210 : course schedule II using BFS
+    public static int[] findOrder(int numCourses, int[][] prerequisites) {
+        int[] ans = new int[numCourses];
+        if(prerequisites.length == 0) {
+            int c = ans.length - 1;
+            for(int i = 0; i < ans.length; i++) {
+                ans[i] = c;
+                c--;
+            }
+            return ans;
+        }
+        
+        List<List<Integer>> adj = new ArrayList<>(numCourses);
+        for(int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList<>());
+        }
+        
+        for(int[] d : prerequisites) {
+            adj.get(d[0]).add(d[1]);
+        }
+        
+        int[] indegree = new int[numCourses];
+        
+        for(int i = 0; i < numCourses; i++) {
+            for(int j = 0; j < adj.get(i).size(); j++) {
+                indegree[adj.get(i).get(j)]++;
+            }
+        }
+        
+        Queue<Integer> q = new ArrayDeque<>();
+        
+        for(int i = 0; i < numCourses; i++) {
+            if(indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+        
+        int count = numCourses - 1;
+        Arrays.fill(ans, -1);
+        while(q.size() != 0) {
+            int rm = q.remove();
+            ans[count--] = rm;
+            
+            for(int ele : adj.get(rm)) {
+                if(--indegree[ele] == 0) {
+                    q.add(ele);
+                }
+            }
+        }
+        
+        for(int ele : ans) {
+            if(ele == -1) {
+                int[] noRes = new int[0];
+                return noRes;
+            }
+        }
+        
+        return ans;
+    }
+
 }
