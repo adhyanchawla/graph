@@ -401,4 +401,62 @@ public class bfsQuestions {
         return ans;
     }
 
+    // lc 329. Longest Increasing Path in a Matrix
+
+    public int longestIncreasingPath(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        
+        int[][] indegree = new int[n][m];
+        
+        int[][] dir = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                for(int d = 0; d < dir.length; d++) {
+                    int r = i + dir[d][0];
+                    int c = j + dir[d][1];
+                    
+                    if(r >= 0 && c >= 0 && r < n && c < m) {
+                        if(matrix[r][c] > matrix[i][j]) {
+                            indegree[r][c]++;
+                        }
+                    }
+                }
+            }
+        }
+        
+        Queue<Integer> q = new ArrayDeque<>();
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if(indegree[i][j] == 0) {
+                    q.add(i * m + j);
+                }
+            }
+        }
+        
+        int level = 0;
+        while(q.size() != 0) {
+            int sz = q.size();
+            while(sz--> 0) {
+                int idx = q.remove();
+                int sr = idx / m;
+                int sc = idx % m;
+                
+                for(int d = 0; d < dir.length; d++) {
+                    int r = sr + dir[d][0];
+                    int c = sc + dir[d][1];
+                    
+                    if(r >= 0 && c >= 0 && r < n && c < m && matrix[sr][sc] < matrix[r][c]) {
+                        if(--indegree[r][c] == 0) {
+                            q.add(r * m + c);
+                        }
+                    }
+                }
+            }
+            level++;
+        }
+        
+        return level;
+    }
+
 }
