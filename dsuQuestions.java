@@ -187,4 +187,33 @@ public class dsuQuestions {
         }
         return ans;
     }
+
+    // lc 684
+    public int[] findRedundantConnection(int[][] edges) {
+        int n = edges.length;
+        par = new int[n + 1];
+        
+        for(int i = 1; i <= n; i++) {
+            par[i] = i;
+        }
+        
+        int[] ans = new int[2];
+        
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            
+            int p1 = findPar(u);
+            int p2 = findPar(v);
+            
+            if(p1 != p2) {
+                par[p2] = p1;
+            } else {
+                ans[0] = u;
+                ans[1] = v;
+                return ans;
+            }
+        }
+        return ans;
+    }
 }
