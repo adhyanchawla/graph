@@ -18,12 +18,14 @@ public class unionFInd {
     static int[] par;
     static int[] size;
 
+    //path compression increases searching in an array => amortised O(1)
     public static int findPar(int u) {
         if(par[u] == u) return u;
 
-        return par[u] = findPar(u);
+        return par[u] = findPar(par[u]);
     }
 
+    //find the union
     public static void union(int p1, int p2) {
         if(size[p1] < size[p2]) {
             par[p1] = p2;
@@ -34,6 +36,7 @@ public class unionFInd {
         }
     }
 
+    //for graph implementation
     public static void addEdge(ArrayList<Edge>[] graph, int u, int v, int w) {
         graph[u].add(new Edge(v, w));
         graph[v].add(new Edge(u, w));
@@ -56,6 +59,7 @@ public class unionFInd {
             size[i] = 1;
         }
 
+        //travelling on neighbours
         for(int [] edge : edges) {
             int u = edge[0], v = edge[1], w = edge[2];
 
