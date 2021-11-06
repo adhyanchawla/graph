@@ -216,4 +216,85 @@ public class dsuQuestions {
         }
         return ans;
     }
+
+    //water distribution
+    public int minCostToSupplyWater(int n, int[] wells, int[][] pipes) {
+        ArrayList<int[]> ans = new ArrayList<>();
+        for(int[] a : pipes) ans.add(a);
+        for(int i = 0; i < wells.length; i++){
+            ans.add(new int[]{0, i + 1, wells[i]});
+        }
+        
+        par = new int[n + 1];
+        size = new int[n + 1];
+        
+        Collections.sort(ans, (a, b) -> {
+            return a[2] - b[2];
+        });
+        
+        for(int i = 0; i <= n; i++){
+            par[i] = i;
+            size[i] = 1;
+        }
+        int res = 0;
+        for(int[] e : ans) {
+            int u = e[0], v = e[1], w = e[2];
+            int p1 = findPar(u);
+            int p2 = findPar(v);
+            
+            if(p1 != p2) {
+                //union(p1, p2);
+                res += w;
+            }
+        }
+        return res;
+      }
+
+      //mr president https://www.hackerearth.com/practice/algorithms/graphs/minimum-spanning-tree/practice-problems/algorithm/mr-president/
+      public int mrPresident(int[][] edges, int n, int k) {
+        //int n = edges.length;
+        par = new int[n + 1];
+
+        for(int i = 0; i <= n; i++) {
+            par[i] = i;
+        }
+
+        Arrays.sort(edges, (a, b) ->{
+            return a[2] - b[2];
+        });
+
+        ArrayList<Integer> ans = new ArrayList<>();
+        int components = n;
+        int cost = 0;
+
+        for(int[] e : edges) {
+            int u = e[0], v = e[1], w = e[2];
+
+            int p1 = findPar(u);
+            int p2 = findPar(v);
+
+            if(p1 != p2) {
+                par[p1] = p2;
+                cost += w;
+                components--;
+                ans.add(w);
+            }
+        }
+
+        if(components > 1) return -1;
+
+        int superRoads = 0;
+        for(int i = ans.size() - 1; i >= 0; i--) {
+            if(cost <= k) {
+                break;
+            }
+
+            cost = cost - ans.get(i) + 1;
+            superRoads++;
+        }
+
+        return cost <= k ? superRoads : -1;
+    }
+
+    
 }
