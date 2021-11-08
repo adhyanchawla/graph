@@ -92,4 +92,47 @@ public class algo {
         kruskalAlgo(edges);
     }
 
+    static int[]low, disc;
+    static boolean[] vis, articulation;
+    static int time = 0, rootCalls = 0;
+
+    public static void dfs(ArrayList<Edge>[] graph, int src, int par) {
+        low[src] = disc[src] = time++;
+        vis[src] = true;
+
+        for(Edge e : graph[src]) {
+            if(!vis[e.v]) {
+                if(par == -1) 
+                rootCalls++;    
+                
+                dfs(graph, e.v, src);
+                if(disc[src] <= low[e.v]) {
+                    articulation[src] = true;
+                }
+
+                if(disc[src] < low[e.v]) {
+                    System.out.println("Articulation Edge: " + src + " -> " +  e.v);
+                }
+                    
+                low[src] = Math.min(low[src], low[e.v]);
+            } else if(e.v != par) {
+                low[src] = Math.min(low[src], disc[e.v]);
+            }
+        }
+    }
+
+    public static void articulationPointsAndBridges(ArrayList<Edge>[] graph) {
+        int n = graph.length;
+        vis = new boolean[n];
+        articulation = new boolean[n];
+        low = new int[n];
+        disc = new int[n];
+        time = 0;
+        rootCalls = 0;
+
+        for(int i = 0; i < n; i++) {
+            dfs(graph, 0, -1);
+        }
+    }
+
 }
