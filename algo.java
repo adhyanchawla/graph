@@ -306,10 +306,12 @@ public class algo {
 
                     if(i == n) {
                         isCycle = true;
+                        break;
                     }
                 }
             }
 
+            prev = curr;
             if(!anyUpdate) break;
         }
 

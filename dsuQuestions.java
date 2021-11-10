@@ -336,5 +336,57 @@ public class dsuQuestions {
         return region;
     }
 
+    int[] poc;
+
+    //lc 924
+    public int minMalwareSpread(int[][] graph, int[] initial) {
+        int n = graph.length;
+        par = new int[n];
+        poc = new int[n]; //population of country
+        
+        for(int i = 0; i < n; i++) {
+            par[i] = i;
+            poc[i] = 1;
+        }
+        
+        //union find
+        for(int i = 0; i < n; i++) {
+            int p1 = findPar(i);
+            for(int j = 0; j < n; j++) {
+                if(i != j) {
+                    if(graph[i][j] == 1) {
+                        int p2 = findPar(j);
+                        
+                        if(p1 != p2) {
+                            par[p2] = p1;
+                            poc[p1] += poc[p2];
+                        }
+                    }
+                }
+            }
+        }
+        
+        Arrays.sort(initial);
+        
+        //infected population in the country
+        int[] ipc = new int[n];
+        for(int i = 0; i < initial.length; i++) {
+            int c = findPar(initial[i]);
+            ipc[c]++;
+        }
+        
+        int infected = initial[0];
+        int maxPopulated = 0;
+        for(int i = 0; i < initial.length; i++) {
+            int p = findPar(initial[i]);
+            if(ipc[p] == 1 && maxPopulated < poc[p]) {
+                maxPopulated = poc[p];
+                infected = initial[i];
+            }
+        }
+        
+        return infected;
+    }
+
 
 }
