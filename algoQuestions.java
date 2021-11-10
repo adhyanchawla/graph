@@ -138,4 +138,57 @@ public class algoQuestions {
         
         return prev[dst] != (int)1e9 ? prev[dst] : -1;
     }
+
+    //lc 1334 using floyd warshall
+    public int findTheCity(int n, int[][] edges, int distanceThreshold) {
+        int[][] mat = new int[n][n];
+        
+        for(int [] d : mat) Arrays.fill(d, (int)1e9);
+        
+        for(int[] e : edges) {
+            mat[e[0]][e[1]] = e[2];
+            mat[e[1]][e[0]] = e[2];
+        }
+        
+        for(int i = 0; i < n; i++) {
+            mat[i][i] = (int)1e5;
+        }
+        
+        int[] cs = new int[n];
+        for(int k = 0; k < n; k++) {
+            for(int i = 0; i < n; i++) {
+                for(int j = 0; j < n; j++) {
+                    if(i != j) {
+                        mat[i][j] = Math.min(mat[i][j], mat[i][k] + mat[k][j]);  
+                        
+                    }
+                    
+                }
+            }
+        }
+        
+        
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(mat[i][j] <= distanceThreshold) {
+                    cs[i]++;
+                }
+            }
+            //count++;
+        }
+        
+        
+        int ans = cs[0];
+        int res = 0;
+        
+        
+        for(int i = 1; i < n; i++) {
+            if(ans >= cs[i]) {
+                ans = cs[i];
+                res = i;
+            }
+        }
+        
+        return res;
+    }
 }
