@@ -92,6 +92,9 @@ public class algo {
         kruskalAlgo(edges);
     }
 
+
+    //articulation point and bridges
+
     static int[]low, disc;
     static boolean[] vis, articulation;
     static int time = 0, rootCalls = 0;
@@ -135,4 +138,184 @@ public class algo {
         }
     }
 
+
+    //dijkstra
+    public static class pair{
+        int vtx;
+        int par;
+        int w;
+        int wsf;
+
+        pair(int vtx, int par, int w, int wsf) {
+            this.vtx = vtx;
+            this.par = par;
+            this.w = w;
+            this.wsf = wsf;
+        }
+
+        pair(int vtx, int wsf) {
+            this.vtx = vtx;
+            this.wsf = wsf;
+        }
+    }
+
+    public static void dijkstra_01(ArrayList<Edge>[] graph) {
+        int n = graph.length;
+        ArrayList<Edge>[] ngraph = new ArrayList[n];
+        for(int i = 0; i < n; i++) {
+            ngraph[i] = new ArrayList<>();
+        }
+
+        boolean[] vis = new boolean[n];
+
+        int[] dist = new int[n];
+        int[] parent = new int[n];
+
+        PriorityQueue<pair> pq = new PriorityQueue<>((a, b) -> {
+            return a.wsf - b.wsf;
+        });
+
+        pq.add(new pair(0, -1, 0, 0));
+
+        while(pq.size() != 0) {
+            int size = pq.size();
+
+            while(size-->0) {
+
+                pair rm = pq.remove();
+
+                if(vis[rm.vtx]) {
+                    continue;
+                }
+
+                vis[rm.vtx] = true;
+
+                if(rm.par != -1)
+                    addEdge(ngraph, rm.vtx, rm.par, rm.w);
+
+                dist[rm.vtx] = rm.wsf;
+                parent[rm.vtx] = rm.par;    
+
+                for(Edge e : graph[rm.vtx]) {
+                    if(!vis[rm.vtx]) {
+                        pq.add(new pair(e.v, rm.vtx, e.w, rm.wsf + e.w));
+                    }
+                }
+            }
+        }
+    }
+
+    public static void dijkstra_02(ArrayList<Edge>[] graph) {
+        int n = graph.length;
+        ArrayList<Edge>[] ngraph = new ArrayList[n];
+
+        for(int i = 0; i < n; i++) 
+            ngraph[i] = new ArrayList<>();
+
+        PriorityQueue<pair> pq = new PriorityQueue<>((a, b)-> {
+            return a.wsf - b.wsf;
+        });    
+
+        int[] dist = new int[n];
+        int[] par = new int[n];
+
+        Arrays.fill(dist, (int)1e9);
+        Arrays.fill(par, -1);
+
+        pq.add(new pair(0, 0));
+        dist[0] = 0;
+        while(pq.size() != 0) {
+            pair rm = pq.remove();
+
+            if(rm.wsf >= dist[rm.vtx]) {
+                continue;
+            }
+
+            for(Edge e : graph[rm.vtx]) {
+                if(rm.wsf + e.w < dist[e.v]) {
+                    dist[e.v] = rm.wsf + e.w;
+                    par[e.v] = rm.vtx;
+                    pq.add(new pair(e.v, e.w + rm.wsf));
+                }
+            }
+        }
+    }
+
+
+    public static class primsPair{
+        int vtx;
+        int w;
+
+        primsPair(int vtx, int w) {
+            this.vtx = vtx;
+            this.w = w;
+        }
+    }
+
+    public static void prims(ArrayList<Edge>[] graph, int src) {
+        int n = graph.length;
+        int[] dis = new int[n];
+
+        PriorityQueue<primsPair> pq = new PriorityQueue<>((a, b) -> {
+            return a.w - b.w;
+        });
+
+        Arrays.fill(dis, (int)1e9);
+        pq.add(new primsPair(src, 0));
+
+        boolean[] vis = new boolean[n];
+        while(pq.size() != 0) {
+            primsPair rm = pq.remove();
+
+            if(vis[rm.vtx]) {
+                continue;
+            }
+
+            vis[rm.vtx] = true;
+
+            for(Edge e : graph[rm.vtx]) {
+                if(!vis[e.v] && e.w < dis[e.v]) {
+                    dis[e.v] = e.w;
+                    pq.add(new primsPair(e.v, e.w));
+                }
+            }
+        }
+    }
+
+    //bellman ford algorithm
+    public static void bellmanFord(int[][] edges, int src, int dest) {
+        int n = edges.length;
+        int[] prev = new int[n];
+        Arrays.fill(prev, (int)1e9);
+
+        prev[src] = 0;
+        boolean isCycle = false;
+        for(int i = 1; i <= n; i++) {
+            int[] curr = new int[n];
+            for(int j = 0; j < n; j++) {
+                curr[j] = prev[j];
+            }
+
+            boolean anyUpdate = false;
+            
+            for(int[] e : edges) {
+                int u = e[0], v = e[1], w = e[2];
+                if(prev[u] != (int)1e9 && prev[u] + w < curr[v]) {
+                    curr[v] = prev[u] + w;
+                    anyUpdate = true;
+
+                    if(i == n) {
+                        isCycle = true;
+                    }
+                }
+            }
+
+            if(!anyUpdate) break;
+        }
+
+        if(isCycle) {
+            System.out.println("Negative Cycle: " + isCycle);
+        }
+
+    }
 }
