@@ -282,7 +282,7 @@ public class algo {
         }
     }
 
-    //bellman ford algorithm
+    //bellman ford algorithm O(EV)
     public static void bellmanFord(int[][] edges, int src, int dest) {
         int n = edges.length;
         int[] prev = new int[n];
@@ -317,6 +317,60 @@ public class algo {
 
         if(isCycle) {
             System.out.println("Negative Cycle: " + isCycle);
+        }
+    }
+
+    // modified version of bellman ford O(EV)
+    public static void bellmanFord_02(int[][] edges, int src) {
+        int n = edges.length;
+        int[] curr = new int[n];
+        Arrays.fill(curr, (int)1e9);
+
+        curr[src] = 0;
+        boolean negative = false;
+        for(int i = 1; i <= n; i++) {
+            boolean anyUpdate = false;
+            for(int[] e : edges) {
+                int u = e[0], v= e[1], w = e[2];
+                if(curr[u] != (int)1e9 && curr[u] + w < curr[v]) {
+                    curr[v] = curr[u] + w;
+                    anyUpdate = true;
+                    if(i == n) {
+                        negative = true;
+                        break;
+                    }
+                }
+            }
+
+            if(!anyUpdate) break;
+        }  
+        
+        if(negative) {
+            System.out.println("Negative Cycle: " + negative);
+        }
+
+    }
+
+
+    //floyd warshall algo - not for negative cycle //O(V^3)
+    public static void floydWarshall(int[][] edges, int n) {
+        int[][] mat = new int[n][n];
+        for(int[] d : mat) Arrays.fill(d, (int)1e9);
+
+        for(int [] e : edges) {
+            mat[e[0]][e[1]] = e[2];
+        }
+
+        for(int i = 0; i < n; i++) {
+            mat[i][i] = 0;
+        }
+
+        for(int k = 0; k < n; k++) {
+            for(int i = 0; i < n; i++) {
+                for(int j = 0; j < n; j++) {
+                    mat[i][j] = Math.min(mat[i][j], mat[i][k] + mat[k][j]);
+                }
+            }
         }
 
     }
