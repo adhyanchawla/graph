@@ -459,4 +459,147 @@ public class bfsQuestions {
         return level;
     }
 
+    //using radius loop
+    // https://www.lintcode.com/problem/787/
+    public boolean hasPath(int[][] maze, int[] start, int[] destination) {
+        // write your code here
+        int n = maze.length, m = maze[0].length, sr = start[0], sc = start[1], er = destination[0], ec = destination[1];
+        boolean[][] vis = new boolean[n][m];
+
+        int[][] dir = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        Queue<Integer> q = new ArrayDeque<>();
+
+        int len = Math.max(m, n);
+        q.add(sr * m + sc);
+
+        while(q.size() != 0) {
+            int sz = q.size();
+            while(sz-->0) {
+                int idx = q.remove();
+                int i = idx / m;
+                int j = idx % m;
+
+                for(int d = 0; d < dir.length; d++) {
+                    int fr = i, fc = j;
+                    for(int rad = 1; rad < len; rad++) {
+                        int r = i + rad * dir[d][0];
+                        int c = j + rad * dir[d][1];
+
+                        if(r >= 0 && c >= 0 && r < n && c < m && maze[r][c] == 0) {
+                            fr = r;
+                            fc = c;
+                        } else break;
+                    }
+
+                        if(vis[fr][fc]) continue;
+
+                        vis[fr][fc] = true;
+                        q.add(fr * m + fc);
+
+                        if(fr == er && fc == ec) {
+                            return true;
+                        }
+                }
+            }
+        }
+        return false;
+    }
+
+    //without using radius loop
+    // https://www.lintcode.com/problem/787/
+    public boolean hasPath01(int[][] maze, int[] start, int[] destination) {
+        // write your code here
+        int n = maze.length, m = maze[0].length, sr = start[0], sc = start[1], er = destination[0], ec = destination[1];
+        boolean[][] vis = new boolean[n][m];
+
+        int[][] dir = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        Queue<Integer> q = new ArrayDeque<>();
+
+        int len = Math.max(m, n);
+        q.add(sr * m + sc);
+
+        while(q.size() != 0) {
+            int sz = q.size();
+            while(sz-->0) {
+                int idx = q.remove();
+                int i = idx / m;
+                int j = idx % m;
+
+                for(int[] d : dir) {
+                    int r = i;
+                    int c = j;
+
+                    while(r >= 0 && c >= 0 && r < n && c < m && maze[r][c] == 0) {
+                        r += d[0];
+                        c += d[1];
+                    }
+
+                    r -= d[0];
+                    c -= d[1];
+                
+                    if(vis[r][c]) continue;
+
+                    vis[r][c] = true;
+                    q.add(r * m + c);
+
+                    if(r == er && c == ec) {
+                            return true;
+                        }
+                    }
+            }
+        }
+        return false;
+    }
+
+    //lintcode 788
+    public int shortestDistance(int[][] maze, int[] start, int[] destination) {
+        // write your code here
+        class pair implements Comparable<pair>{
+            int r, c, wsf;
+
+            pair(int r, int c, int wsf) {
+                this.r = r;
+                this.c = c;
+                this.wsf = wsf;
+            }
+
+            public int compareTo(pair o) {
+                return this.wsf - o.wsf;
+            }
+        }
+        int n = maze.length, m = maze[0].length, sr = start[0], sc = start[1], er = destination[0], ec = destination[1];
+        int[][] distance = new int[n][m];
+        for(int [] d : distance) {
+            Arrays.fill(d, (int)1e8);
+        }
+        PriorityQueue<pair> pq = new PriorityQueue<>();
+        int[][] dir = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        pq.add(new pair(sr, sc, 0));
+        distance[sr][sc] = 0;
+        while(pq.size() != 0) {
+            pair rm = pq.remove();
+
+            for(int[] d : dir) {
+                int fr = rm.r, fc = rm.c, l = rm.wsf;
+                while(fr >= 0 && fc >= 0 && fr < n && fc < m && maze[fr][fc] == 0) {
+                    fr += d[0];
+                    fc += d[1];
+                    l++;
+                }
+
+                fr -= d[0];
+                fc -= d[1];
+                l--;
+
+                if(l >= distance[fr][fc]) continue;
+
+                distance[fr][fc] = l;
+
+                pq.add(new pair(fr, fc, l));
+                distance[fr][fc] = l;
+            }
+        } 
+        return distance[er][ec] != (int) 1e8 ? distance[er][ec] : -1;
+    }
+
 }
