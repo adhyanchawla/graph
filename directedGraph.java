@@ -156,4 +156,66 @@ public class directedGraph {
         return ans;
 
     }
+
+    public static void dfs_topo01(ArrayList<Edge>[] graph, int src, boolean[] vis, ArrayList<Integer> ans) {
+        vis[src] = true;
+
+        for(Edge e : graph[src]) {
+            if(!vis[e.v]) {
+                dfs_topo01(graph, e.v, vis, ans);
+            }
+        }
+
+        ans.add(src);
+    }
+
+    public static void dfs_SCC_Compo(ArrayList<Edge>[] graph, int src, boolean[] vis, ArrayList<Integer> component) {
+        vis[src] = true;
+        component.add(src);
+
+        for(Edge e : graph[src]) {
+            if(!vis[e.v]) {
+                dfs_SCC_Compo(graph, e.v, vis, component);
+            }
+        }
+    }
+
+    public static void kosaRaju(ArrayList<Edge>[] graph) {
+        int n = graph.length;
+        boolean[] vis = new boolean[n];
+
+        ArrayList<Integer> order = new ArrayList<>();
+        for(int i = 0; i < n; i++) {
+            if(!vis[i])
+            dfs_topo01(graph, i, vis, order);
+        }
+
+
+        ArrayList<Edge>[] ngraph = new ArrayList[n];
+        for(int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        for(int i = 0; i < n; i++) {
+            for(Edge e : graph[i]) {
+                ngraph[e.v].add(new Edge(i, e.w));
+            }
+        }
+
+        for(int i = 0; i < n; i++) {
+            vis[i] = false;
+        }
+
+        ArrayList<Integer> comp = new ArrayList<>();
+        for(int i = order.size() - 1; i >= 0; i--) {
+            int vtx = order.get(i);
+            if(!vis[vtx]) {
+                dfs_SCC_Compo(graph, vtx, vis, comp);
+            }
+
+            System.out.println(comp);
+            comp.clear();
+            
+        }
+    }
 }
