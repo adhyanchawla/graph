@@ -552,6 +552,7 @@ public class bfsQuestions {
     }
 
     //lintcode 788
+    // https://www.lintcode.com/problem/788/
     public int shortestDistance(int[][] maze, int[] start, int[] destination) {
         // write your code here
         class pair implements Comparable<pair>{
