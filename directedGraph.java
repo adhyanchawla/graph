@@ -211,11 +211,9 @@ public class directedGraph {
             int vtx = order.get(i);
             if(!vis[vtx]) {
                 dfs_SCC_Compo(graph, vtx, vis, comp);
+                System.out.println(comp);
+                comp.clear();
             }
-
-            System.out.println(comp);
-            comp.clear();
-            
         }
     }
 }
